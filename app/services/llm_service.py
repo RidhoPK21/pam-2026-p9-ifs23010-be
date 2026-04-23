@@ -10,7 +10,7 @@ def generate_from_llm(prompt: str):
 
         # Menggunakan model Gemini 1.5 Flash
         response = client.models.generate_content(
-            model='gemini-1.5-flash',
+            model='gemini-2.5-flash',
             contents=prompt,
         )
         
