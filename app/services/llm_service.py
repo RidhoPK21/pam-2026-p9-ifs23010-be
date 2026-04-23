@@ -1,21 +1,34 @@
 import os
 from google import genai
 
-# Inisialisasi Client Gemini yang baru
-# Secara otomatis akan membaca GEMINI_API_KEY dari file .env kamu
-client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
-
 def generate_from_llm(prompt: str):
     try:
-        # Menggunakan model Gemini 2.5 Flash terbaru
+        # 1. Pindahkan inisialisasi ke dalam fungsi agar PASTI terbaca setelah .env diload
+        # SDK google-genai secara otomatis mencari os.environ["GEMINI_API_KEY"],
+        # jadi kita tidak perlu menuliskannya secara manual di dalam kurung ().
+        client = genai.Client()
+
+        # Menggunakan model Gemini 1.5 Flash
         response = client.models.generate_content(
             model='gemini-1.5-flash',
             contents=prompt,
         )
         
-        # Mengembalikan dalam format Dictionary seperti yang diminta oleh parser.py
+        raw_text = response.text
+
+        # 2. PEMBERSIH MARKDOWN (ANTI-CRASH)
+        # Menghapus bungkus ```json dan ``` jika AI menambahkannya
+        if raw_text.startswith("```json"):
+            raw_text = raw_text.replace("```json", "", 1)
+            raw_text = raw_text.replace("```", "")
+        elif raw_text.startswith("```"):
+            raw_text = raw_text.replace("```", "")
+            
+        raw_text = raw_text.strip()
+
+        # Mengembalikan Dictionary bersih
         return {
-            "response": response.text
+            "response": raw_text
         }
         
     except Exception as e:
