@@ -32,5 +32,5 @@ def generate_from_llm(prompt: str):
         }
         
     except Exception as e:
-        print(f"Error LLM: {str(e)}")
-        raise Exception("LLM request failed")
+        # Kita lemparkan isi variabel 'e' (error asli dari Google) ke Flutter!
+        raise Exception(f"PESAN ASLI GEMINI: {str(e)}")
